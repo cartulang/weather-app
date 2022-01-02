@@ -7,6 +7,8 @@ const SearchLocation = () => {
 	// hooks	// const { searchLocation } = useWeather();
 	const [query, setQuery] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isError, setIsError] = useState(false);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -14,13 +16,21 @@ const SearchLocation = () => {
 			return alert("Location cannot be empty");
 		}
 
+		setIsLoading(true);
+		setIsError(false);
+
 		axios
 			.get(`https://weather-app-api24.herokuapp.com/api/search/${query}`)
 			.then((res) => {
 				setSearchResults(res.data);
+				setIsLoading(false);
+				setIsError(false);
 				setQuery("");
 			})
-			.catch((err) => console.error(err));
+			.catch((err) => {
+				setIsLoading(false);
+				setIsError(true);
+			});
 	};
 
 	return (
@@ -36,7 +46,14 @@ const SearchLocation = () => {
 				/>
 				<button className="btn btn-primary">Search</button>
 			</form>
-			<SearchResults searchResults={searchResults} />
+
+			{isLoading ? (
+				<h2 className="text-center">Loading...</h2>
+			) : isError ? (
+				<h2 className="text-center">Error fetching data.</h2>
+			) : (
+				<SearchResults searchResults={searchResults} />
+			)}
 		</>
 	);
 };
