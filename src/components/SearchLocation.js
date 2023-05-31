@@ -1,7 +1,7 @@
 import SearchResults from "./SearchResults";
+import { FetchLocations } from "../api/weatherApi";
 
 import { useState } from "react";
-import axios from "axios";
 
 const SearchLocation = () => {
 	// hooks	// const { searchLocation } = useWeather();
@@ -10,7 +10,7 @@ const SearchLocation = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isError, setIsError] = useState(false);
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!query) {
 			return alert("Location cannot be empty");
@@ -19,18 +19,17 @@ const SearchLocation = () => {
 		setIsLoading(true);
 		setIsError(false);
 
-		axios
-			.get(`https://weather-app-api24.herokuapp.com/api/search/${query}`)
-			.then((res) => {
-				setSearchResults(res.data);
-				setIsLoading(false);
-				setIsError(false);
-				setQuery("");
-			})
-			.catch((err) => {
-				setIsLoading(false);
-				setIsError(true);
-			});
+		try {
+			const locations = await FetchLocations(query);
+			console.log(locations);
+			setSearchResults(locations.data)
+		} catch (e) {
+			setIsError(true);
+			console.log(e);
+		}
+		finally{
+			setIsLoading(false);
+		}
 	};
 
 	return (

@@ -17,6 +17,7 @@ const LinkStyle = {
 };
 
 const SearchResults = ({ searchResults }) => {
+	console.log(searchResults);
 	return (
 		<div>
 			{searchResults &&

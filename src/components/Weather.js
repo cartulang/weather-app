@@ -5,6 +5,7 @@ import HourlyConditions from "./HourlyConditions";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { FetchWeatherCondtions } from "../api/weatherApi";
 
 const Weather = () => {
 	const [conditions, setConditions] = useState([]);
@@ -29,18 +30,11 @@ const Weather = () => {
 			return;
 		}
 
-		axios
-			.get(
-				`https://weather-app-api24.herokuapp.com/api/current/${coordinates.long}&${coordinates.lat}`
-			)
-			.then((res) => {
-				setConditions(res.data);
-				setIsLoading(false);
-			})
-			.catch((err) => {
-				console.err(err);
-				setIsLoading(false);
-			});
+		FetchWeatherCondtions(coordinates.long, coordinates.lat)
+		.then(res => {
+			setConditions(res.data)
+		}).catch(e => console.log(e))
+		.finally(() => setIsLoading(false));
 	}, [coordinates.long, coordinates.lat, navigate]);
 
 	return (
